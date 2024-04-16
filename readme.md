@@ -17,4 +17,4 @@
     git clone https://github.com/eviecamila/distributed-db.git
     ```
 
-3. Correr los servers en cada OS :v
+3. Correr los scripts en cada OS :v
