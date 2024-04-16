@@ -6,7 +6,7 @@ echo "Contraseña de MYSQL"
 read password
 mkdir /var/log/mysql
 chown mysql:mysql /var/log/mysql
-query="mysql -u root -p$password asterisk -e "
+query="mysql -u root -p $password asterisk -e "
 $query"GRANT REPLICATION SLAVE ON *.* TO '$slave_user'@'$slave_host' IDENTIFIED BY 'slave';flush privileges;"
 cat <<EOF >> /etc/my.cnf
 [mysqld]
@@ -23,12 +23,12 @@ output=$($query"use asterisk; FLUSH TABLES WITH READ LOCK;SHOW MASTER STATUS;")
 
 # Imprimir la salida almacenada en la variable
 cd /tmp
-mysqldump -u root -p$password asterisk > asteriskslave.sql
+mysqldump -u root -p $password asterisk > asteriskslave.sql
 scp asteriskslave.sql $slave_user@$slave_host:/tmp
 $query"UNLOCK TABLES;"
 
-echo $output >> out.txt
+echo $output > out.txt
 clear
 echo "detalles del archivo"
-echo output
+echo $output
 echo "fueron guardados en out.txt"
