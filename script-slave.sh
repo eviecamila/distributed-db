@@ -11,7 +11,8 @@ read pos
 sed -i '/^\[mysqld\]$/a\
 server-id=20\n\
 replicate-do-db=asterisk\n\
-skip_slave_start\n' /etc/my.cnf
+skip_slave_start\n\
+read_only' /etc/my.cnf
 
 systemctl restart mariadb
 cd /tmp
