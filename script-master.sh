@@ -8,7 +8,7 @@ echo "Contraseña de MYSQL"
 read password
 mkdir /var/log/mysql
 chown mysql:mysql /var/log/mysql
-mysql -u usuario -p -e "GRANT REPLICATION SLAVE ON *.* TO '$user'@'$slave' IDENTIFIED BY 'slave';flush privileges;quit;"
+mysql -u root -p -e "GRANT REPLICATION SLAVE ON *.* TO '$user'@'$slave' IDENTIFIED BY 'slave';flush privileges;quit;"
 cat <<EOF >> /etc/my.cnf
 [mysqld]
 server-id               = 10
@@ -20,7 +20,7 @@ sync_binlog             = 1
 EOF
 systemctl restart mariadb
 # Ejecutar el comando MySQL y capturar la salida en una variable
-output=$(mysql -u root -p$password -e "use asterisk; FLUSH TABLES WITH READ LOCK;SHOW MASTER STATUS;")
+output=$(mysql -u root -p $password -e "use asterisk; FLUSH TABLES WITH READ LOCK;SHOW MASTER STATUS;")
 
 # Imprimir la salida almacenada en la variable
 echo "$output"
