@@ -8,15 +8,7 @@ mkdir /var/log/mysql
 chown mysql:mysql /var/log/mysql
 query="mysql -u root -p $password asterisk -e "
 $query"GRANT REPLICATION SLAVE ON *.* TO '$slave_user'@'$slave_host' IDENTIFIED BY 'slave';flush privileges;"
-cat <<EOF >> /etc/my.cnf
-[mysqld]
-server-id               = 10
-log_bin                 = /var/log/mysql/mysql-bin.log
-expire_logs_days        = 10
-max_binlog_size         = 100M
-binlog_do_db            = asterisk
-sync_binlog             = 1
-EOF
+sed -i "s/[mysqld]/[mysqld]\nserver-id               = 10\nlog_bin                 = /var/log/mysql/mysql-bin.log\nexpire_logs_days        = 10\nmax_binlog_size         = 100M\nbinlog_do_db            = asterisk\nsync_binlog             = 1/g" /etc/my.cnf
 systemctl restart mariadb
 # Ejecutar el comando MySQL y capturar la salida en una variable
 output=$($query"use asterisk; FLUSH TABLES WITH READ LOCK;SHOW MASTER STATUS;")
