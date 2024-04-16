@@ -8,7 +8,12 @@ echo "Posicion, ejemplo: 32"
 read pos
 
 # Editar el archivo de configuración my.cnf
-sed -i "s/[mysqld]/[mysqld]\nserver-id=20\nmaster-connect-retry=60\nreplicate-do-db=asterisk\nskip_slave_start\nread_only/g" /etc/my.cnf
+sed -i '/^\[mysqld\]$/a\
+server-id=20\n\
+master-connect-retry=60\n\
+replicate-do-db=asterisk\n\
+skip_slave_start\n\
+read_only' /etc/my.cnf
 
 systemctl restart mariadb
 cd /tmp
