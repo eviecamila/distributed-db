@@ -1,4 +1,4 @@
-# Megascript para MYSQL
+# Megascript para la replicacion en MYSQL
 
 
 
