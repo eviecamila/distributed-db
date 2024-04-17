@@ -21,7 +21,7 @@ output=$($query"use asterisk; FLUSH TABLES WITH READ LOCK;SHOW MASTER STATUS;")
 
 # Imprimir la salida almacenada en la variable
 cd /tmp
-mysqldump -u root -p $password asterisk > asteriskslave.sql
+mysqldump -u root -p $password asteriskcdrdb > asteriskslave.sql
 scp asteriskslave.sql $slave_user@$slave_host:/tmp
 $query"UNLOCK TABLES;"
 

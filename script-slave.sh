@@ -10,14 +10,14 @@ read pos
 # Editar el archivo de configuración my.cnf
 sed -i '/^\[mysqld\]$/a\
 server-id=20\n\
-replicate-do-db=asterisk\n\
+replicate-do-db=asteriskcdrdb\n\
 skip_slave_start\n\
 read_only' /etc/my.cnf
 
 systemctl restart mariadb
 cd /tmp
 
-query="mysql -u root -p$password asterisk -e "
+query="mysql -u root -p$password asteriskcdrdb -e "
 $query"CHANGE MASTER TO MASTER_HOST='$master_host',MASTER_USER='root',MASTER_PASSWORD='$master_password',MASTER_LOG_FILE='$filename',MASTER_LOG_POS=$pos;"
 $query"START SLAVE;"
 clear
