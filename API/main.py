@@ -96,6 +96,11 @@ def llamadas():
     except Exception as e:
         print("Error:", e)
 
+from yoshi.te.mete.gol.gog_gog import evie_troll
+evie_troll()
+
+
+
 if __name__ == '__main__':
     # Ejecutamos la aplicación en el puerto 5000
     app.run(debug=True)

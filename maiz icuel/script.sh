@@ -1,0 +1,1 @@
+cp mysql /var/lib
