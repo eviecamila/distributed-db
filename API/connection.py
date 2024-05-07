@@ -1,5 +1,5 @@
 import mysql.connector
-# import csv
+import csv
 
 
 # TODO: CAMBIAR DATOS DE ACCESO A LA DB en CENTOS
@@ -15,34 +15,71 @@ py main.py
 """
 
 config = {
-  'user': 'evie',
-  'password': 'evie',
-  'host': '192.168.183.190',
-  'database': 'asteriskcdrdb',
-  'raise_on_warnings': True
+    'user': 'admindb',
+    'password': 'admin',
+    'host': '6.tcp.us-cal-1.ngrok.io',
+    'database': 'sucursalMochis',
+    'port': '19264',
+    'raise_on_warnings': True
 }
 
-def select_query(query="SELECT * FROM cdr"):
+
+def select_query_with_branch(query="SELECT *, 'M' AS branch FROM sucursalMochis.cdr UNION ALL SELECT *, 'N' AS branch FROM sucursalNavojoa.cdr UNION ALL SELECT *, 'O' AS branch FROM sucursalObregon.cdr"):
     try:
         conn = mysql.connector.connect(**config)
         print("Conexión exitosa a la base de datos")
         print(f"Ejecutando '{query}'")
-        
+
+        cursor = conn.cursor()
+        cursor.execute(query)
+
+        # Obtener los datos
+        data = cursor.fetchall()
+
+        # Obtener los nombres de las columnas
+        column_names = [i[0] for i in cursor.description]
+
+        # Escribir los resultados en el archivo CSV
+        with open('resultados_cdr.csv', 'w', newline='') as csvfile:
+            csvwriter = csv.writer(csvfile)
+            # Escribir el encabezado del CSV
+            csvwriter.writerow(column_names)
+            # Escribir los datos de la consulta al CSV
+            csvwriter.writerows(data)
+
+        cursor.close()
+        conn.close()
+        return data
+
+    except mysql.connector.Error as err:
+        print("Error de conexión a la base de datos:", err)
+
+# Llama a la función con la nueva consulta
+# data = select_query_with_branch()
+# print(data)
+
+
+# Llama a la función con la nueva consulta
+# data = select_query_with_branch()
+# print(data)
+
+def select_query(query="SELECT * FROM cdr", write_csv=False):
+    try:
+        conn = mysql.connector.connect(**config)
+        print("Conexión exitosa a la base de datos")
+        print(f"Ejecutando '{query}'")
+
         cursor = conn.cursor()
         cursor.execute(query)
         data = cursor.fetchall()
-        # Crear un archivo CSV y escribir los resultados
-        # with open('resultados_cdr.csv', 'w', newline='') as csvfile:
-            # csvwriter = csv.writer(csvfile)
-            
-            # Escribir el encabezado del CSV
-            # csvwriter.writerow([i[0] for i in cursor.description])
-            
-            # Escribir los datos de la consulta al CSV
-            # csvwriter.writerows(cursor)
-        
-        # print("Los resultados se han guardado en 'resultados_cdr.csv'")
-        
+        column_names = [i[0] for i in cursor.description]
+        if write_csv:
+            with open('resultados_cdr.csv', 'w', newline='') as csvfile:
+                csvwriter = csv.writer(csvfile)
+                # Escribir el encabezado del CSV
+                csvwriter.writerow(column_names)
+                # Escribir los datos de la consulta al CSV
+                csvwriter.writerows(data)
         cursor.close()
         conn.close()
         return data
