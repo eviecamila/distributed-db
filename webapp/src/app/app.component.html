@@ -7,7 +7,7 @@
         <label for="fechaFin">Fecha de fin:</label>
         <input type="date" id="fechaFin" [(ngModel)]="fechaFin" />
       </div>
-<br>
+      <br />
       <div>
         <label for="filtroCiudad">Filtrar por Ciudad:</label>
         <select id="filtroCiudad" [(ngModel)]="ciudad">
@@ -23,33 +23,34 @@
           </option>
         </select>
         <button (click)="buscar()">Buscar</button>
-        <br>
         <button (click)="generarReporte()">Generar PDF</button>
       </div>
     </div>
-    <div *ngIf="results">
-      <table id="results">
-        <thead>
-          <tr>
-            <th>Fecha de llamada</th>
-            <th>Origen</th>
-            <th>Destino</th>
-            <th>Duración (seg)</th>
-            <th>Estado de la llamada</th>
-            <th>Ciudad</th>
-          </tr>
-        </thead>
-        <tbody id="tabla">
-          <tr *ngFor="let call of calls">
-            <td>{{ call.calldate }}</td>
-            <td>{{ call.src }}</td>
-            <td>{{ call.dst }}</td>
-            <td>{{ call.billsec }}</td>
-            <td>{{ call.disposition }}</td>
-            <td>{{ cities[call.branch] }}</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
+  </div>
+  <br /><br />
+  <div id="tabla" *ngIf="results">
+    <table id="results">
+      <thead>
+        <tr>
+          <th>Fecha de llamada</th>
+          <th>Origen</th>
+          <th>Destino</th>
+          <th>Duración</th>
+          <th>Estado</th>
+          <th>Ciudad</th>
+        </tr>
+      </thead>
+      <!-- <tbody id="tabla"> -->
+      <tbody>
+        <tr *ngFor="let call of calls">
+          <td>{{ call.calldate }}</td>
+          <td>{{ call.src }}</td>
+          <td>{{ call.dst }}</td>
+          <td>{{ call.billsec }} seg.</td>
+          <td>{{ estadosLlamada[call.disposition] || "NA" }}</td>
+          <td>{{ cities[call.branch] }}</td>
+        </tr>
+      </tbody>
+    </table>
   </div>
 </div>

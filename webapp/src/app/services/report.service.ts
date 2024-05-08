@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
-import { jsPDF } from 'jspdf';
-import 'jspdf-autotable'; // Importar el plugin
+import * as pdfMake from 'pdfmake/build/pdfmake';
+import * as pdfFonts from 'pdfmake/build/vfs_fonts';
+
+(pdfMake as any).vfs = pdfFonts.pdfMake.vfs;
 
 @Injectable({
   providedIn: 'root'
@@ -9,70 +11,92 @@ export class ReportService {
 
   constructor() { }
 
-  exportAsPDF() {
-    const doc = new jsPDF('l', 'pt', 'letter');
-    const resultsTable = document.querySelector('#results') as HTMLElement;
+  async exportAsPDF() {
+    // Define el contenido del encabezado
+    const header = {
+      text: 'Reporte Genial', // Título del encabezado
+      style: 'header' // Estilo CSS del encabezado
+    };
 
-    // Copiar la tabla original
-    const clonedTable = resultsTable.cloneNode(true) as HTMLElement;
-    // Ajustar el tamaño de la tabla clonada para el PDF
-    clonedTable.style.width = '8in';
-    // Establecer el overflow para que el contenido adicional se desplace hacia abajo
-    clonedTable.style.overflowY = 'auto';
-    const headers = clonedTable.children[0].innerHTML;
-    const tableBody = clonedTable.children[1];
-    const rows = tableBody.querySelectorAll('tr');
+    // Descargar la imagen y convertirla a formato base64
+    const imageBase64 = await this.getImageAsBase64('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSVBEz9ntN5Hb2afWaNCV0hu-yY2EUybRUk_DLgoCLX&s');
 
-    const pageSize = doc.internal.pageSize;
-    const pageHeight = pageSize.height || pageSize.getHeight();
-    const headerHeight = this.getHeight(headers);
-    const rowHeight = this.getHeight(rows[0].innerHTML);
+    if (!imageBase64) {
+      console.error('Error: No se pudo cargar la imagen');
+      return;
+    }
 
-    // Calcular cuántas filas caben en una página
-    const rowCountPerPage = Math.floor((pageHeight - headerHeight) / rowHeight);
+    // Define la imagen del encabezado
+    const image = {
+      image: imageBase64,
+      width: 100, // Ancho de la imagen
+      alignment: 'center' // Alineación de la imagen
+    };
 
-    // Dividir la tabla en partes que quepan completamente en cada página
-    let startRow = 0;
-    while (startRow < rows.length) {
-      const endRow = Math.min(startRow + rowCountPerPage, rows.length);
-      const tablePart = this.getTablePart(clonedTable, startRow, endRow);
-      doc.html(tablePart.outerHTML, {
-        callback: (doc: jsPDF) => {
-          if (endRow < rows.length) {
-            doc.addPage();
-          } else {
-            doc.save('pdf-export.pdf');
-          }
-        }
+    // Obtén la tabla HTML por su ID
+    const table: any = document.getElementById('results');
+
+    // Crea una matriz para almacenar los datos de la tabla
+    const tableData: any = [];
+
+    // Obtén las filas de la tabla HTML excluyendo la primera fila de encabezados
+    const rows = table?.querySelectorAll('tr');
+    const dataRows = Array.from(rows!).slice(1);
+
+    // Itera sobre las filas de datos y extrae los datos de cada celda
+    dataRows.forEach((row: any) => {
+      const rowData: any = [];
+      row.querySelectorAll('td').forEach((cell: any) => {
+        rowData.push(cell.textContent || ''); // Añade el texto de la celda a la fila de datos
       });
-      startRow = endRow;
-    }
+      tableData.push(rowData); // Añade la fila de datos a la matriz de datos de la tabla
+    });
+
+    // Define la definición de la tabla para pdfmake
+    const tableDefinition = {
+      table: {
+        headerRows: 1,
+        body: tableData,
+      },
+    };
+
+    // Define los estilos para el documento
+    const styles = {
+      header: {
+        fontSize: 18,
+        bold: true,
+        alignment: 'center',
+        margin: [0, 0, 0, 20],
+      },
+    };
+
+    // Define el contenido del documento con la tabla
+    const documentDefinition: any = {
+      content: [
+        header,
+        image, // Añade la imagen del encabezado
+        { text: 'Tabla de Ejemplo', style: 'header' },
+        tableDefinition,
+      ],
+      styles: styles, // Referencia los estilos definidos
+    };
+
+    // Crea el PDF con el contenido definido
+    const pdfDoc = pdfMake.createPdf(documentDefinition);
+
+    // Abre el PDF en una nueva ventana
+    pdfDoc.open();
   }
 
-  // Función para obtener la altura de un elemento HTML
-  private getHeight(html: string): number {
-    const tempDiv = document.createElement('div');
-    tempDiv.innerHTML = html;
-    document.body.appendChild(tempDiv);
-    const height = tempDiv.offsetHeight;
-    document.body.removeChild(tempDiv);
-    return height;
+
+  async getImageAsBase64(url: string): Promise<string> {
+    const response = await fetch(url);
+    const blob = await response.blob();
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onloadend = () => resolve(reader.result as string);
+      reader.onerror = reject;
+      reader.readAsDataURL(blob);
+    });
   }
-
-  // Función para obtener una parte de la tabla
-  private getTablePart(table: HTMLElement, startRow: number, endRow: number): HTMLElement {
-    const part = table.cloneNode(true) as HTMLElement;
-    const tableBody = part.children[1] as HTMLElement;
-    while (tableBody.children.length > endRow - startRow) {
-      const lastChild = tableBody.lastChild;
-      if (lastChild) {
-        tableBody.removeChild(lastChild);
-      } else {
-        break; // Salir del bucle si no hay más hijos
-      }
-    }
-    return part;
-  }
-
-
 }
