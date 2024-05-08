@@ -23,10 +23,12 @@
           </option>
         </select>
         <button (click)="buscar()">Buscar</button>
+        <br>
+        <button (click)="generarReporte()">Generar PDF</button>
       </div>
     </div>
     <div *ngIf="results">
-      <table>
+      <table id="results">
         <thead>
           <tr>
             <th>Fecha de llamada</th>
