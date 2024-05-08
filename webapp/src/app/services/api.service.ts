@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { addr } from '../env/env';
+import { addr } from '../environment/env';
 
 const ip = addr;
 
