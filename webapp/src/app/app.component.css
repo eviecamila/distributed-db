@@ -1,0 +1,81 @@
+/* Estilos generales */
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+/* Contenedor principal */
+.content {
+  padding: 30px;
+}
+
+/* Contenedor de los controles de búsqueda */
+.control-container {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+#filtros{
+  width: 100%;
+  text-align: center;
+}
+/* Estilos para el botón de búsqueda */
+button {
+  padding: 10px 20px;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-left: 10px;
+}
+
+button:hover {
+  background-color: #0056b3;
+}
+
+/* Estilos para las etiquetas y entradas de fecha */
+label {
+  font-weight: bold;
+  margin-right: 10px;
+}
+
+input[type="date"] {
+  padding: 8px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  margin-right: 10px;
+}
+
+/* Estilos para los selectores */
+select {
+  padding: 8px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  margin-right: 10px;
+}
+
+/* Estilos para la tabla de resultados */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+th, td {
+  padding: 10px;
+  border-bottom: 1px solid #ddd;
+}
+
+th {
+  background-color: #f2f2f2;
+  font-weight: bold;
+  text-align: left;
+}
+
+/* Estilos para filas alternas */
+tr:nth-child(even) {
+  background-color: #f9f9f9;
+}

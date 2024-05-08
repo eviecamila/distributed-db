@@ -14,12 +14,20 @@ pip install -r requirements.txt
 py main.py
 """
 
+# config = {
+#     'user': 'admindb',
+#     'password': 'admin',
+#     'host': '0.tcp.us-cal-1.ngrok.io',
+#     'database': 'sucursalMochis',
+#     'port': '16567',
+#     'raise_on_warnings': True
+# }
 config = {
-    'user': 'admindb',
-    'password': 'admin',
-    'host': '6.tcp.us-cal-1.ngrok.io',
+    'user': 'root',
+    'password': '',
+    'host': 'localhost',
     'database': 'sucursalMochis',
-    'port': '19264',
+    'port': '3306',
     'raise_on_warnings': True
 }
 
