@@ -57,16 +57,13 @@ select {
   margin-right: 10px;
 }
 
-/* Estilos para la tabla de resultados
+/* Estilos para la tabla de resultados */
 table {
   width: 100%;
   border-collapse: collapse;
   margin-top: 20px;
-} */
-#tabla{
-  display: grid;
-  place-items: center;
 }
+
 th, td {
   padding: 10px;
   border-bottom: 1px solid #ddd;
