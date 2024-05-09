@@ -65,7 +65,15 @@ export class AppComponent {
       console.log(data)
     });
   }
+  displayedColumns: string[] = [
 
+    'src',
+    'dst',
+    'duration',
+    'disposition',
+    'calldate',
+    "ciudad"
+  ];
   formatDate(dateString: string): string {
     const fechaOriginal = new Date(dateString);
     const opcionesDeFormato: Intl.DateTimeFormatOptions = {
@@ -87,7 +95,7 @@ export class AppComponent {
     // this.api.getCalls({
     //   d: '', c: this.ciudad, e: this.estadoLlamada, d1: this.fechaInicio, d2: this.fechaFin
     // }).subscribe((data: any) => {
-      this.PDF.exportAsPDF(); // Pasar los datos de la tabla a exportAsPDF()
+    this.PDF.exportAsPDF(); // Pasar los datos de la tabla a exportAsPDF()
     // });?
   }
 
