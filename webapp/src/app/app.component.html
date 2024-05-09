@@ -11,7 +11,7 @@
           <input matInput type="date" [(ngModel)]="fechaFin" />
         </mat-form-field>
       </div>
-<br>
+      <br />
       <div>
         <label for="filtroCiudad">Filtrar por Ciudad:</label>
         <select id="filtroCiudad" [(ngModel)]="ciudad">
@@ -27,14 +27,17 @@
           </option>
         </select>
         <button (click)="buscar()">Buscar</button>
-        <br>
-        <button (click)="generarReporte()">Generar PDF</button>
+        <br />
       </div>
+      <br>
+      <button (click)="generarReporte()">Generar PDF</button>
     </div>
+
     <div *ngIf="results">
       <table id="results">
         <thead>
           <tr>
+            <th>#</th>
             <th>Fecha de llamada</th>
             <th>Origen</th>
             <th>Destino</th>
@@ -45,11 +48,18 @@
         </thead>
         <tbody id="tabla">
           <tr *ngFor="let call of calls">
+            <td>{{ call.number }}</td>
+
             <td>{{ call.calldate }}</td>
+
             <td>{{ call.src }}</td>
+
             <td>{{ call.dst }}</td>
-            <td>{{ call.billsec }}</td>
-            <td>{{ call.disposition }}</td>
+
+            <td>{{ call.billsec }} seg.</td>
+
+            <td>{{ estadosLlamada[call.disposition] || "NA" }}</td>
+
             <td>{{ cities[call.branch] }}</td>
           </tr>
         </tbody>
