@@ -1,98 +1,55 @@
-import mysql.connector
-import csv
+import pymysql.cursors
 
-
-# TODO: CAMBIAR DATOS DE ACCESO A LA DB en CENTOS
-
-"""
-# evie mamadisima
-# Script para instalar la API cagada
-yum install git
-git clone https://github.com/eviecamila/distributed-db.git
-cd API
-pip install -r requirements.txt
-py main.py
-"""
-
-# config = {
-#     'user': 'admindb',
-#     'password': 'admin',
-#     'host': '0.tcp.us-cal-1.ngrok.io',
-#     'database': 'sucursalMochis',
-#     'port': '16567',
-#     'raise_on_warnings': True
-# }
+# Configuración de la conexión a la base de datos
 config = {
-    'user': 'root',
-    'password': '',
-    'host': 'localhost',
-    'database': 'sucursalMochis',
-    'port': '3306',
-    'raise_on_warnings': True
+    "host": "0.tcp.us-cal-1.ngrok.io",
+    "user": "admindb",
+    "password": "admin",
+    "database": "sucursalMochis",
+    "port": 13386,
+    "charset": "utf8mb4",
+    "cursorclass": pymysql.cursors.DictCursor,
+    "autocommit": True,
 }
 
 
-def select_query_with_branch(query="SELECT *, 'M' AS branch FROM sucursalMochis.cdr UNION ALL SELECT *, 'N' AS branch FROM sucursalNavojoa.cdr UNION ALL SELECT *, 'O' AS branch FROM sucursalObregon.cdr"):
+def filtrado(params):
     try:
-        conn = mysql.connector.connect(**config)
-        print("Conexión exitosa a la base de datos")
-        print(f"Ejecutando '{query}'")
+        # Establecer conexión a la base de datos
+        connection = pymysql.connect(**config)
 
-        cursor = conn.cursor()
-        cursor.execute(query)
+        # Definir la consulta SQL con parámetros
+        query = "CALL Filtrar(%s, %s, %s, %s, %s, %s);"
 
-        # Obtener los datos
-        data = cursor.fetchall()
+        # Ejecutar la consulta con los parámetros proporcionados
+        with connection.cursor() as cursor:
+            cursor.execute(
+                query,
+                (
+                    params["src"],
+                    params["dst"],
+                    params["d1"],
+                    params["d2"],
+                    params["status"],
+                    params["city"],
+                ),
+            )
 
-        # Obtener los nombres de las columnas
-        column_names = [i[0] for i in cursor.description]
+            # Obtener los resultados de la consulta
+            data = cursor.fetchall()
 
-        # Escribir los resultados en el archivo CSV
-        with open('resultados_cdr.csv', 'w', newline='') as csvfile:
-            csvwriter = csv.writer(csvfile)
-            # Escribir el encabezado del CSV
-            csvwriter.writerow(column_names)
-            # Escribir los datos de la consulta al CSV
-            csvwriter.writerows(data)
-
-        cursor.close()
-        conn.close()
         return data
 
-    except mysql.connector.Error as err:
-        print("Error de conexión a la base de datos:", err)
+    except pymysql.MySQLError as e:
+        print("Error de conexión a la base de datos:", e)
 
-# Llama a la función con la nueva consulta
-# data = select_query_with_branch()
-# print(data)
+    finally:
+        # Cerrar la conexión a la base de datos
+        if connection:
+            connection.close()
 
 
-# Llama a la función con la nueva consulta
-# data = select_query_with_branch()
-# print(data)
-
-def select_query(query="SELECT * FROM cdr", write_csv=False):
-    try:
-        conn = mysql.connector.connect(**config)
-        print("Conexión exitosa a la base de datos")
-        print(f"Ejecutando '{query}'")
-
-        cursor = conn.cursor()
-        cursor.execute(query)
-        data = cursor.fetchall()
-        column_names = [i[0] for i in cursor.description]
-        if write_csv:
-            with open('resultados_cdr.csv', 'w', newline='') as csvfile:
-                csvwriter = csv.writer(csvfile)
-                # Escribir el encabezado del CSV
-                csvwriter.writerow(column_names)
-                # Escribir los datos de la consulta al CSV
-                csvwriter.writerows(data)
-        cursor.close()
-        conn.close()
-        return data
-
-    except mysql.connector.Error as err:
-        print("Error de conexión a la base de datos:", err)
-
-# connect_and_write_to_csv()
+# Ejemplo de uso de la función filtrado con parámetros
+# params = {"src": "valor1", "dst": "valor2", "d1": "valor3", "d2": "valor4", "status": "valor5", "city": "valor6"}
+# results = filtrado(params)
+# print(results)
