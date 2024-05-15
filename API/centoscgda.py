@@ -48,7 +48,7 @@ class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
         self.send_header('Content-type', 'application/json')
         self.end_headers()
         # Envía el cuerpo de la respuesta
-        json_data = read_csv_to_json('resultados_cdr.csv')
+        json_data = select_query_with_branch()
         if json_data:
             self.wfile.write(json_data.encode())
         else:
