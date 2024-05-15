@@ -1,5 +1,5 @@
-import pymysql.cursors
-
+import pymysql.cursors, json
+from datetime import datetime
 # Configuración de la conexión a la base de datos
 config = {
     "host": "0.tcp.us-cal-1.ngrok.io",

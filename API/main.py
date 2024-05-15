@@ -18,10 +18,7 @@ def index():
 
 @app.route("/api/ejemplo", methods=["GET"])
 def ejemplo():
-    datos = {
-        "mensaje": "Este es un ejemplo de datos JSON desde Flask.",
-        "status": "success",
-    }
+    datos = connection.select_query_with_branch()
     return jsonify(datos)
 
 
