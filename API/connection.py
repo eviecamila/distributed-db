@@ -13,6 +13,38 @@ config = {
 }
 
 
+def select_query_with_branch(query="SELECT calldate,src,dst,duration,disposition,ciudad FROM VSucursales"):
+    try:
+        print("Ejecutando '{}'".format(query))
+        
+        # Establecer conexión a la base de datos
+        connection = pymysql.connect(host='localhost',
+                             user='evie',
+                             password='evie',
+                             database='sucursalMochis',
+                             cursorclass=pymysql.cursors.DictCursor)
+        
+        with connection:
+            # Crear un cursor
+            with connection.cursor() as cursor:
+                # Ejecutar la consulta
+                cursor.execute(query)
+                # Obtener los resultados
+                results = cursor.fetchall()
+                
+                # Convertir objetos datetime a cadena
+                for row in results:
+                    for key, value in row.items():
+                        if isinstance(value, datetime):
+                            row[key] = value.strftime('%Y-%m-%d %H:%M:%S')
+                
+                # Convertir los resultados a formato JSON
+                return json.dumps(results)
+    except Exception as e:
+        print("Error al ejecutar la consulta:", e)
+        return None
+
+
 def filtrado(params):
     try:
         # Establecer conexión a la base de datos
