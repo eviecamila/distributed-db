@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import csv
-from http.server import BaseHTTPRequestHandler, HTTPServer
+from BaseHTTPServer import BaseHTTPRequestHandler, HTTPServer
 import json
 import pymysql.cursors  # Necesitas instalar pymysql, por ejemplo, con "pip install pymysql"
 
@@ -15,15 +15,15 @@ connection = pymysql.connect(host='localhost',
 def select_query_with_branch(query="SELECT src, dst, d1, d2, status, 'M' AS branch FROM sucursalMochis.cdr UNION ALL SELECT src, dst, d1, d2, status, 'N' AS branch FROM sucursalNavojoa.cdr UNION ALL SELECT src, dst, d1, d2, status, 'O' AS branch FROM sucursalObregon.cdr"):
     try:
         print("Ejecutando '{}'".format(query))
-        with connection.cursor() as cursor:
-            cursor.execute(query)
-            with open('resultados_cdr.csv', 'w', newline='') as csvfile:
-                fieldnames = ['src', 'dst', 'd1', 'd2', 'status', 'branch']
-                writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
-                writer.writeheader()
-                for row in cursor:
-                    writer.writerow(row)
+
+        # Comando para ejecutar la consulta SQL y guardar los resultados en un archivo CSV
+        command = "mysql -u root -e \"{}\" > resultados_cdr.csv".format(query)
+
+        # Ejecutar el comando en la terminal
+        os.system(command)
+
         print("Consulta ejecutada con éxito. Resultados guardados en resultados_cdr.csv")
+        return 'XD'
     except Exception as e:
         print("Error al ejecutar la consulta:", e)
 
