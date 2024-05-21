@@ -1,6 +1,13 @@
-import pymysql
 import csv
+import pymysql
 
+config = {
+    'user': 'root',
+    'password': '',
+    'host': '127.0.0.1',
+    'database': 'sucursalMochis',
+    'port': 3306,
+}
 # TODO: CAMBIAR DATOS DE ACCESO A LA DB en CENTOS
 
 """
@@ -13,24 +20,8 @@ pip install -r requirements.txt
 py main.py
 """
 
-# config = {
-#     'user': 'admindb',
-#     'password': 'admin',
-#     'host': '0.tcp.us-cal-1.ngrok.io',
-#     'database': 'sucursalMochis',
-#     'port': '16567',
-#     'raise_on_warnings': True
-# }
-config = {
-    'user': 'root',
-    'password': '',
-    'host': '127.0.0.1',
-    'database': 'sucursalMochis',
-    'port': 3306,
-}
 
-
-def select_query_with_branch(query="SELECT *, 'M' AS branch FROM sucursalMochis.cdr UNION ALL SELECT *, 'N' AS branch FROM sucursalNavojoa.cdr UNION ALL SELECT *, 'O' AS branch FROM sucursalObregon.cdr"):
+def select_query_with_branch(query="select * from ViewSucursales"):
     try:
         conn = pymysql.connect(**config)
         print("Conexión exitosa a la base de datos")
