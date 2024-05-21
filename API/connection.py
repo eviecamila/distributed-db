@@ -1,6 +1,5 @@
-import mysql.connector
+import pymysql
 import csv
-
 
 # TODO: CAMBIAR DATOS DE ACCESO A LA DB en CENTOS
 
@@ -23,18 +22,17 @@ py main.py
 #     'raise_on_warnings': True
 # }
 config = {
-    'user': 'root',
-    'password': '',
+    'user': 'admindb',
+    'password': 'admin',
     'host': 'localhost',
     'database': 'sucursalMochis',
-    'port': '3306',
-    'raise_on_warnings': True
+    'port': 3306,
 }
 
 
 def select_query_with_branch(query="SELECT *, 'M' AS branch FROM sucursalMochis.cdr UNION ALL SELECT *, 'N' AS branch FROM sucursalNavojoa.cdr UNION ALL SELECT *, 'O' AS branch FROM sucursalObregon.cdr"):
     try:
-        conn = mysql.connector.connect(**config)
+        conn = pymysql.connect(**config)
         print("Conexión exitosa a la base de datos")
         print(f"Ejecutando '{query}'")
 
@@ -59,21 +57,13 @@ def select_query_with_branch(query="SELECT *, 'M' AS branch FROM sucursalMochis.
         conn.close()
         return data
 
-    except mysql.connector.Error as err:
+    except pymysql.MySQLError as err:
         print("Error de conexión a la base de datos:", err)
 
-# Llama a la función con la nueva consulta
-# data = select_query_with_branch()
-# print(data)
-
-
-# Llama a la función con la nueva consulta
-# data = select_query_with_branch()
-# print(data)
 
 def select_query(query="SELECT * FROM cdr", write_csv=False):
     try:
-        conn = mysql.connector.connect(**config)
+        conn = pymysql.connect(**config)
         print("Conexión exitosa a la base de datos")
         print(f"Ejecutando '{query}'")
 
@@ -92,7 +82,5 @@ def select_query(query="SELECT * FROM cdr", write_csv=False):
         conn.close()
         return data
 
-    except mysql.connector.Error as err:
+    except pymysql.MySQLError as err:
         print("Error de conexión a la base de datos:", err)
-
-# connect_and_write_to_csv()
