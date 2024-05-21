@@ -9,6 +9,14 @@
       </div>
       <br />
       <div>
+        <label for="origen">Extensión Origen:</label>
+        <input type="text" id="origen" [(ngModel)]="origen" />
+        <br /><br />
+        <label for="destino">Extensión Destino:</label>
+        <input type="text" id="destino" [(ngModel)]="destino" />
+      </div>
+      <br />
+      <div>
         <label for="filtroCiudad">Filtrar por Ciudad:</label>
         <select id="filtroCiudad" [(ngModel)]="ciudad">
           <option value="">Todas</option>
@@ -29,6 +37,21 @@
   </div>
   <br /><br />
   <div id="tabla" *ngIf="results">
+    <div>
+      <!-- Botones de navegación -->
+      <button (click)="prevPage()" [disabled]="currentPage === 1">
+        Anterior
+      </button>
+      <span>{{ currentPage }}</span>
+      <!-- Muestra el número de página actual -->
+      <button
+        (click)="nextPage()"
+        [disabled]="currentPage * pageSize >= calls.length"
+      >
+        Siguiente
+      </button>
+    </div>
+
     <table id="results">
       <thead>
         <tr>
@@ -42,7 +65,12 @@
       </thead>
       <!-- <tbody id="tabla"> -->
       <tbody>
-        <tr *ngFor="let call of calls">
+        <tr
+          *ngFor="
+            let call of calls
+              | slice : (currentPage - 1) * pageSize : currentPage * pageSize
+          "
+        >
           <td>{{ call.calldate }}</td>
           <td>{{ call.src }}</td>
           <td>{{ call.dst }}</td>

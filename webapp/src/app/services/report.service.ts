@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import * as pdfMake from 'pdfmake/build/pdfmake';
 import * as pdfFonts from 'pdfmake/build/vfs_fonts';
+import { cities, ciudades, estados, estadosLlamada, formatDate } from '../app.component';
 
 (pdfMake as any).vfs = pdfFonts.pdfMake.vfs;
 
@@ -8,18 +9,17 @@ import * as pdfFonts from 'pdfmake/build/vfs_fonts';
   providedIn: 'root'
 })
 export class ReportService {
-
   constructor() { }
 
-  async exportAsPDF() {
+  async exportAsPDF(data: any = null) {
     // Define el contenido del encabezado
     const header = {
-      text: 'Reporte Genial', // Título del encabezado
+      text: 'Huevos de Yoshi', // Título del encabezado
       style: 'header' // Estilo CSS del encabezado
     };
 
     // Descargar la imagen y convertirla a formato base64
-    const imageBase64 = await this.getImageAsBase64('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSVBEz9ntN5Hb2afWaNCV0hu-yY2EUybRUk_DLgoCLX&s');
+    const imageBase64 = await this.getImageAsBase64('assets/huevos.jpeg');
 
     if (!imageBase64) {
       console.error('Error: No se pudo cargar la imagen');
@@ -38,19 +38,27 @@ export class ReportService {
 
     // Crea una matriz para almacenar los datos de la tabla
     const tableData: any = [];
-
+    tableData.push(['Fecha de llamada', 'Origen', 'Destino', 'Duracion (seg.)', 'Estado', 'Ciudad'])
     // Obtén las filas de la tabla HTML excluyendo la primera fila de encabezados
-    const rows = table?.querySelectorAll('tr');
-    const dataRows = Array.from(rows!).slice(1);
-
-    // Itera sobre las filas de datos y extrae los datos de cada celda
-    dataRows.forEach((row: any) => {
-      const rowData: any = [];
-      row.querySelectorAll('td').forEach((cell: any) => {
-        rowData.push(cell.textContent || ''); // Añade el texto de la celda a la fila de datos
+    console.log(data)
+    if (data) {
+      data.forEach((row: any) => {
+        tableData.push([formatDate(row.calldate), row.src, row.dst, row.billsec, String(estadosLlamada[row.disposition]), String(cities[row.branch])])
       });
-      tableData.push(rowData); // Añade la fila de datos a la matriz de datos de la tabla
-    });
+    }
+    else {
+      const rows = table?.querySelectorAll('tr');
+      const dataRows = Array.from(rows!).slice(1);
+
+      // Itera sobre las filas de datos y extrae los datos de cada celda
+      dataRows.forEach((row: any) => {
+        const rowData: any = [];
+        row.querySelectorAll('td').forEach((cell: any) => {
+          rowData.push(cell.textContent || ''); // Añade el texto de la celda a la fila de datos
+        });
+        tableData.push(rowData); // Añade la fila de datos a la matriz de datos de la tabla
+      });
+    }
 
     // Define la definición de la tabla para pdfmake
     const tableDefinition = {
@@ -75,7 +83,7 @@ export class ReportService {
       content: [
         header,
         image, // Añade la imagen del encabezado
-        { text: 'Tabla de Ejemplo', style: 'header' },
+        { text: 'Reporte de Llamadas', style: 'header' },
         tableDefinition,
       ],
       styles: styles, // Referencia los estilos definidos

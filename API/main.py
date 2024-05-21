@@ -39,8 +39,8 @@ AND=' AND '
 def llamadas_distribuidas():
     data = request.args
     try:
-        src, dst, status, c, d1, d2 = [
-            None, None, None, ["M", "N", "O"], None, None]
+        src, dst, status, c, d1, d2, src, dst = [
+            None, None, None, ["M", "N", "O"], None, None, None, None]
 
         src = data.get('s')
 
@@ -50,6 +50,8 @@ def llamadas_distribuidas():
         status = data.get('e')
         d1 = data.get('d1')
         d2 = data.get('d2')
+        src = data.get('src')
+        dst = data.get('dst')
         query = ''
         if c:
             for city in c:
@@ -82,6 +84,13 @@ def llamadas_distribuidas():
                             if put_union: sub_query += AND
                             sub_query += f"calldate <= '{data['d2']}'"
                             put_union = True
+                    if src:
+                        sub_query += f"src = '{src}'"
+                        put_union = True
+                    if dst:
+                        if put_union: sub_query += AND
+                        sub_query += f"dst = '{dst}'"
+                        put_union = True
                 if query:  query += " UNION ALL "
                 query += sub_query
         print 

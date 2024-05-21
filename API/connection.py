@@ -22,9 +22,9 @@ py main.py
 #     'raise_on_warnings': True
 # }
 config = {
-    'user': 'admindb',
-    'password': 'admin',
-    'host': 'localhost',
+    'user': 'root',
+    'password': '',
+    'host': '127.0.0.1',
     'database': 'sucursalMochis',
     'port': 3306,
 }
@@ -70,6 +70,10 @@ def select_query(query="SELECT * FROM cdr", write_csv=False):
         cursor = conn.cursor()
         cursor.execute(query)
         data = cursor.fetchall()
+        if data is None:
+            print("No se encontraron resultados para la consulta.")
+            return None
+
         column_names = [i[0] for i in cursor.description]
         if write_csv:
             with open('resultados_cdr.csv', 'w', newline='') as csvfile:
